@@ -7,6 +7,7 @@ import com.github.wrdlbrnft.sortedlistadapter.SortedListAdapter;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
+import java.util.ArrayList;
 
 /**
  * Model holding the course summary information shown in the course list.
@@ -69,14 +70,12 @@ public class Summary implements SortedListAdapter.ViewModel {
     return title;
   }
 
-  private String entire;
   /**
-   * Get the department + number + title.
+   * * Get the department + number + title.
    * @return the entire thing
    */
   public final String getEntire() {
-    entire = department + " " + number + ": " + title;
-    return entire;
+    return  department + " " + number + ": " + title;
   }
 
   /**
@@ -155,7 +154,7 @@ public class Summary implements SortedListAdapter.ViewModel {
    * @return Comparator<Summary>
    */
   public static final Comparator<Summary> COMPARATOR = (courseModel1, courseModel2) -> {
-    return (courseModel1.entire.compareTo(courseModel2.entire));
+    return (courseModel1.getEntire().compareTo(courseModel2.getEntire()));
   };
 
   /**
@@ -168,6 +167,12 @@ public class Summary implements SortedListAdapter.ViewModel {
       @NonNull final List<Summary> courses, @NonNull final String text) {
     //should filter the passed list of courses to only include those that
     //contain the passed String, ignoring case
-    return courses;
+    List<Summary> result = new ArrayList<>();
+    for (Summary course : courses) {
+      if (course.getEntire().toUpperCase().contains(text)) {
+        result.add(course);
+      }
+    }
+    return result;
   }
 }
