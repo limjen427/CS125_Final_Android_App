@@ -167,9 +167,11 @@ public class Summary implements SortedListAdapter.ViewModel {
       @NonNull final List<Summary> courses, @NonNull final String text) {
     //should filter the passed list of courses to only include those that
     //contain the passed String, ignoring case
+    assert text != null : "text should not be null";
+    assert courses != null : "courses should contain courses";
     List<Summary> result = new ArrayList<>();
     for (Summary course : courses) {
-      if (course.getEntire().toUpperCase().contains(text)) {
+      if (course.getEntire().toUpperCase().contains(text.toUpperCase())) {
         result.add(course);
       }
     }
