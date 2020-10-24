@@ -152,10 +152,10 @@ public class Summary implements SortedListAdapter.ViewModel {
    * comparator courseModel.
    * @param courseModel1
    * @param courseModel2
-   * @return Comparator<Summary> sort
+   * @return Comparator<Summary>
    */
   public static final Comparator<Summary> COMPARATOR = (courseModel1, courseModel2) -> {
-    return courseModel1.entire.compareTo(courseModel2.entire);
+    return (courseModel1.entire.compareTo(courseModel2.entire));
   };
 
   /**
