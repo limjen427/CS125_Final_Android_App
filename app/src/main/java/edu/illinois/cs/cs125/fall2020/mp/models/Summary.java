@@ -69,6 +69,16 @@ public class Summary implements SortedListAdapter.ViewModel {
     return title;
   }
 
+  private String entire;
+  /**
+   * Get the department + number + title.
+   * @return the entire thing
+   */
+  public final String getEntire() {
+    entire = department + " " + number + ": " + title;
+    return entire;
+  }
+
   /**
    * Create an empty Summary.
    */
@@ -130,17 +140,34 @@ public class Summary implements SortedListAdapter.ViewModel {
 
   /**
    * {@inheritDoc}
+   * @param model
+   * @return boolean
    */
   @Override
   public <T> boolean isContentTheSameAs(@NonNull final T model) {
     return equals(model);
   }
 
-  public static final Comparator<Summary> COMPARATOR =
-      (courseModel1, courseModel2) -> 0;
+  /**
+   * comparator courseModel.
+   * @param courseModel1
+   * @param courseModel2
+   * @return Comparator<Summary> sort
+   */
+  public static final Comparator<Summary> COMPARATOR = (courseModel1, courseModel2) -> {
+    return courseModel1.entire.compareTo(courseModel2.entire);
+  };
 
+  /**
+   * filer the result.
+   * @param courses
+   * @param text
+   * @return List<Summary>
+   */
   public static List<Summary> filter(
       @NonNull final List<Summary> courses, @NonNull final String text) {
+    //should filter the passed list of courses to only include those that
+    //contain the passed String, ignoring case
     return courses;
   }
 }
