@@ -71,7 +71,7 @@ public class Summary implements SortedListAdapter.ViewModel {
   }
 
   /**
-   * * Get the department + number + title.
+   * Get the department + number + title.
    * @return the entire thing
    */
   public final String getEntire() {
@@ -158,7 +158,7 @@ public class Summary implements SortedListAdapter.ViewModel {
   };
 
   /**
-   * filer the result.
+   * filter the result.
    * @param courses
    * @param text
    * @return List<Summary>
