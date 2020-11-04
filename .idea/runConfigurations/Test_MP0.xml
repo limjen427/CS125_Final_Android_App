@@ -4,7 +4,7 @@
     <useClassPathOnly />
     <extension name="coverage">
       <pattern>
-        <option name="PATTERN" value="edu.illinois.cs.cs125.fall2020.mp.*" />
+        <option name="PATTERN" value="edu.illinois.cs.cs125.fall2020.mp.activities.*" />
         <option name="ENABLED" value="true" />
       </pattern>
     </extension>
