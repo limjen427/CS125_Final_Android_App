@@ -100,7 +100,7 @@ public final class Client {
                     url,
                     response -> {
                       try {
-                        Course course = objectMapper.readValues(response, Course.class);
+                        Course course = objectMapper.readValue(response, Course.class);
                         callbacks.courseResponse(summary, course);
                       } catch (JsonProcessingException e) {
                         e.printStackTrace();
