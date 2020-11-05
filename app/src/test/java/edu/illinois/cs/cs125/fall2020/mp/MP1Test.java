@@ -182,33 +182,33 @@ public final class MP1Test {
     @RunWith(AndroidJUnit4.class)
     @LooperMode(LooperMode.Mode.PAUSED)
     public static class IntegrationTests {
-//        @BeforeClass
-//        public static void setup() throws IOException {
-//            MP1Test.setup();
-//        }
-//
-//        /**
-//         * Test the client getCourse method
-//         */
-//        @Test(timeout = 20000L)
-//        @Graded(points = 20)
-//        public void testClientGetCourse() throws JsonProcessingException, InterruptedException, ExecutionException {
-//            Client client = Client.start();
-//
-//            for (String summaryString : summaries) {
-//                Summary summary = mapper.readValue(summaryString, Summary.class);
-//                CompletableFuture<Course> completableFuture = new CompletableFuture<>();
-//                client.getCourse(summary, new Client.CourseClientCallbacks() {
-//                    @Override
-//                    public void courseResponse(Summary summary, Course course) {
-//                        completableFuture.complete(course);
-//                    }
-//                });
-//                Course course = completableFuture.get();
-//                compareCourseToSerializedSummary(course, summaryString);
-//            }
-//        }
-//
+        @BeforeClass
+        public static void setup() throws IOException {
+            MP1Test.setup();
+        }
+
+        /**
+         * Test the client getCourse method
+         */
+        @Test(timeout = 20000L)
+        @Graded(points = 20)
+        public void testClientGetCourse() throws JsonProcessingException, InterruptedException, ExecutionException {
+            Client client = Client.start();
+
+            for (String summaryString : summaries) {
+                Summary summary = mapper.readValue(summaryString, Summary.class);
+                CompletableFuture<Course> completableFuture = new CompletableFuture<>();
+                client.getCourse(summary, new Client.CourseClientCallbacks() {
+                    @Override
+                    public void courseResponse(Summary summary, Course course) {
+                        completableFuture.complete(course);
+                    }
+                });
+                Course course = completableFuture.get();
+                compareCourseToSerializedSummary(course, summaryString);
+            }
+        }
+
 //        /**
 //         * Test CourseActivity with intent.
 //         */
