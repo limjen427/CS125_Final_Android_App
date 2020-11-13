@@ -16,6 +16,7 @@ import edu.illinois.cs.cs125.fall2020.mp.adapters.CourseListAdapter;
 import edu.illinois.cs.cs125.fall2020.mp.application.CourseableApplication;
 import edu.illinois.cs.cs125.fall2020.mp.databinding.ActivityMainBinding;
 //import edu.illinois.cs.cs125.fall2020.mp.models.Course;
+//import edu.illinois.cs.cs125.fall2020.mp.models.Course;
 import edu.illinois.cs.cs125.fall2020.mp.models.Summary;
 import edu.illinois.cs.cs125.fall2020.mp.network.Client;
 import java.util.Arrays;
@@ -67,6 +68,12 @@ public final class MainActivity extends AppCompatActivity
     // Retrieve the API client from the application and initiate a course summary request
     CourseableApplication application = (CourseableApplication) getApplication();
     application.getCourseClient().getSummary(DEFAULT_YEAR, DEFAULT_SEMESTER, this);
+
+//    // Retrieve the API client from the application and initiate a course course request
+//    CourseableApplication application1 = (CourseableApplication) getApplication();
+//    for (Summary course : courses) {
+//      application1.getCourseClient().getCourse(course, this);
+//    }
 
     // Register this component as a callback for changes to the search view component shown above
     // the course list
