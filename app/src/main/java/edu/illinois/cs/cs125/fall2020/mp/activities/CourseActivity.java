@@ -18,10 +18,7 @@ import edu.illinois.cs.cs125.fall2020.mp.models.Course;
 import edu.illinois.cs.cs125.fall2020.mp.databinding.ActivityCourseBinding;
 import edu.illinois.cs.cs125.fall2020.mp.models.Summary;
 import edu.illinois.cs.cs125.fall2020.mp.network.Client;
-//import edu.illinois.cs.cs125.fall2020.mp.network.Client;
 
-
-//import edu.illinois.cs.cs125.fall2020.mp.R;
 
 /**
  * Course Activity class.
