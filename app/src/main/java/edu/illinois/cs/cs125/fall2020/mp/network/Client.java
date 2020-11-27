@@ -2,6 +2,8 @@ package edu.illinois.cs.cs125.fall2020.mp.network;
 
 import android.util.Log;
 import androidx.annotation.NonNull;
+
+//import com.android.volley.AuthFailureError;
 import com.android.volley.Cache;
 import com.android.volley.ExecutorDelivery;
 import com.android.volley.Network;
@@ -16,6 +18,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.illinois.cs.cs125.fall2020.mp.application.CourseableApplication;
 import edu.illinois.cs.cs125.fall2020.mp.models.Course;
+import edu.illinois.cs.cs125.fall2020.mp.models.Rating;
 import edu.illinois.cs.cs125.fall2020.mp.models.Summary;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -53,6 +56,16 @@ public final class Client {
      * @param course course
      */
     default void courseResponse(Summary summary, Course course) {}
+
+    /**
+     * Return rating for the given summary.
+     *
+     * @param summary course symmary
+     * @param rating course rating
+     */
+    default void yourRating(Summary summary, Rating rating) {}
+
+    //default void testPost(String theString) {}
   }
 
   /**
@@ -106,6 +119,84 @@ public final class Client {
                         e.printStackTrace();
                       }
                     },
+                    error -> Log.e(TAG, error.toString()));
+    requestQueue.add(courseRequest);
+  }
+
+//  public void setString(
+//          @NonNull final String theString,
+//          @NonNull final CourseClientCallbacks callbacks) {
+//    String url = CourseableApplication.SERVER_URL + "test/";
+//    StringRequest summaryRequest =
+//            new StringRequest(
+//                Request.Method.POST,
+//                url,
+//                response -> callbacks.testPost(theString /*request.toString()*/),
+//                error -> Log.e(TAG, error.toString())) {
+//              @Override
+//              public byte[] getBody() throws AuthFailureError {
+//                return theString.getBytes();
+//              }
+//            };
+//    requestQueue.add(summaryRequest);
+//  }
+//  public void getString(
+//          @NonNull final CourseClientCallbacks callbacks) {
+//    String url = CourseableApplication.SERVER_URL + "test/";
+//    StringRequest summaryRequest =
+//            new StringRequest(
+//                    Request.Method.GET,
+//                    url,
+//                    response -> callbacks.testPost(response.toString()),
+//                    error -> Log.e(TAG, error.toString()));
+//    requestQueue.add(summaryRequest);
+//  }
+
+  /**
+   * Getter of Rating.
+   * @param summary
+   * @param clientId
+   * @param callbacks
+   */
+  public void getRating(
+          @NonNull final Summary summary,
+          @NonNull final String clientId,
+          @NonNull final CourseClientCallbacks callbacks
+  ) {
+    String url = CourseableApplication.SERVER_URL + "rating/" + summary.getPath() + "?client=" + clientId;
+    StringRequest courseRequest =
+            new StringRequest(
+                    Request.Method.GET,
+                    url,
+                    response -> {
+                      try {
+                        Rating rating = objectMapper.readValue(response, Rating.class);
+                        callbacks.yourRating(summary, rating);
+                      } catch (JsonProcessingException e) {
+                        e.printStackTrace();
+                      }
+                    },
+                    error -> Log.e(TAG, error.toString()));
+    requestQueue.add(courseRequest);
+  }
+  
+  /**
+   * * PostRating.
+   * @param summary
+   * @param rating rating
+   * @param callbacks
+   */
+  public void postRating(
+          @NonNull final Summary summary,
+          @NonNull final Rating rating,
+          @NonNull final CourseClientCallbacks callbacks
+  ) {
+    String url = CourseableApplication.SERVER_URL + "rating/" + summary.getPath() + "?client=" + rating.getId();
+    StringRequest courseRequest =
+            new StringRequest(
+                    Request.Method.POST,
+                    url,
+                    response -> callbacks.yourRating(summary, rating),
                     error -> Log.e(TAG, error.toString()));
     requestQueue.add(courseRequest);
   }

@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.illinois.cs.cs125.fall2020.mp.application.CourseableApplication;
+import edu.illinois.cs.cs125.fall2020.mp.models.Rating;
 import edu.illinois.cs.cs125.fall2020.mp.models.Summary;
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -51,13 +52,13 @@ public final class Server extends Dispatcher {
 
   @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
   private final Map<Summary, String> courses = new HashMap<>();
-  private static final int PUTNUM = 4;
+  private static final int FOUR = 4;
   //course/year/semester/department/number
 
   private MockResponse getCourse(@NonNull final String path) {
     //String path -> Summary
     String[] parts = path.split("/");
-    if (parts.length != PUTNUM) {
+    if (parts.length != FOUR) {
       return new MockResponse().setResponseCode(HttpURLConnection.HTTP_BAD_REQUEST);
     }
     Summary course1 = new Summary(parts[0], parts[1], parts[2], parts[3], "");
@@ -68,6 +69,85 @@ public final class Server extends Dispatcher {
     }
     return new MockResponse().setResponseCode(HttpURLConnection.HTTP_OK).setBody(course);
   }
+
+  private boolean checkUUID(@NonNull final String uuid) {
+    if (uuid.matches("[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}")) {
+      return true;
+    }
+    return false;
+  }
+
+  private final Map<Map<Summary, String>, Rating> ratings = new HashMap<>();
+
+  private MockResponse getRating(@NonNull final RecordedRequest request) {
+    String path = request.getPath().replaceFirst("/rating/", "");
+
+    String[] uuidParts = path.split("\\?client=");
+    if (uuidParts.length != 2) {
+      return new MockResponse().setResponseCode(HttpURLConnection.HTTP_BAD_REQUEST);
+    }
+
+    String[] urlParts = uuidParts[0].split("/");
+    if (urlParts.length != FOUR) {
+      return new MockResponse().setResponseCode(HttpURLConnection.HTTP_BAD_REQUEST);
+    }
+
+    String ratingUuid = uuidParts[1];
+    if (!checkUUID(ratingUuid)) {
+      return new MockResponse().setResponseCode(HttpURLConnection.HTTP_BAD_REQUEST);
+    }
+
+    Summary newCourse = new Summary(urlParts[0], urlParts[1], urlParts[2], urlParts[3], "");
+    String course = courses.getOrDefault(newCourse, null);
+    if (course == null) {
+      return new MockResponse().setResponseCode(HttpURLConnection.HTTP_NOT_FOUND);
+    }
+
+    Rating newRating = ratings.getOrDefault(courses, new Rating(ratingUuid, Rating.NOT_RATED));
+
+    if (!ratingUuid.equals(newRating.getId())) {
+      return new MockResponse().setResponseCode(HttpURLConnection.HTTP_BAD_REQUEST);
+    }
+
+    String rating = "";
+    try {
+      rating = mapper.writeValueAsString(newRating);
+    } catch (JsonProcessingException e) {
+      e.printStackTrace();
+    }
+    if (request.getMethod().equals("GET")) {
+      return new MockResponse().setResponseCode(HttpURLConnection.HTTP_OK).setBody(rating);
+    } else if (request.getMethod().equals("POST")) {
+      rating = request.getBody().readUtf8();
+//      try {
+//        Rating postRating = mapper.readValue(rating, Rating.class);
+//        ratings.put(courses, postRating);
+//      } catch (JsonProcessingException e) {
+//        e.printStackTrace();
+//      }
+      return new MockResponse().setResponseCode(HttpURLConnection.HTTP_MOVED_TEMP).setHeader(
+              "Location", "/rating/" + path
+      );
+    }
+    return new MockResponse().setResponseCode(HttpURLConnection.HTTP_BAD_REQUEST);
+  }
+
+//  private String theString = "";
+//  private MockResponse testPost(@NonNull final RecordedRequest request) {
+//    if (request.getMethod().equals("GET")) {
+//      return new MockResponse().setResponseCode(HttpURLConnection.HTTP_OK).setBody(theString);
+//    } else if (request.getMethod().equals("POST")) {
+//      theString = request.getBody().readUtf8();
+//      return new MockResponse().setResponseCode(HttpURLConnection.HTTP_MOVED_TEMP).setHeader(
+//              "Location", "/test/"
+//      );
+//      //return new MockResponse().setResponseCode(HttpURLConnection.HTTP_OK);
+//    }
+//    System.out.println(request.getMethod());
+//    System.out.println(request.getBody().readUtf8());
+//    return new MockResponse().setResponseCode(HttpURLConnection.HTTP_BAD_REQUEST);
+//  }
+
 
   @NonNull
   @Override
@@ -82,6 +162,11 @@ public final class Server extends Dispatcher {
         return getSummary(path.replaceFirst("/summary/", ""));
       } else if (path.startsWith("/course/")) {
         return getCourse(path.replaceFirst("/course/", ""));
+      } else if (path.startsWith("/rating/")) {
+        return getRating(request);
+        //return getRating(path.replaceFirst("rating", ""));
+//      } else if (path.equals("/test/")) {
+//        return testPost(request);
       }
       return new MockResponse().setResponseCode(HttpURLConnection.HTTP_NOT_FOUND);
     } catch (Exception e) {
