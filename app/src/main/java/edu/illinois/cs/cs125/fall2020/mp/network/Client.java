@@ -179,11 +179,10 @@ public final class Client {
                     error -> Log.e(TAG, error.toString()));
     requestQueue.add(courseRequest);
   }
-  
   /**
-   * * PostRating.
+   * postRating.
    * @param summary
-   * @param rating rating
+   * @param rating
    * @param callbacks
    */
   public void postRating(

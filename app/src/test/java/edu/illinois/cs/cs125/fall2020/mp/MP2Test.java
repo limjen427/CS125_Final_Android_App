@@ -357,233 +357,233 @@ public final class MP2Test {
     }
   }
 
-//  @SuppressWarnings({
-//    "SameParameterValue",
-//    "ConstantConditions",
-//    "MismatchedQueryAndUpdateOfCollection"
-//  })
-//  @RunWith(AndroidJUnit4.class)
-//  @LooperMode(LooperMode.Mode.PAUSED)
-//  public static class IntegrationTests {
-//    @BeforeClass
-//    public static void setup() throws IOException {
-//      MP2Test.setup();
-//    }
-//
-////    /** Test the post */
-////    @Test
-////    public void testPost() throws ExecutionException, InterruptedException {
-////      Client client = Client.start();
-////
-////
-////      CompletableFuture<String> firstString = new CompletableFuture<>();
-////      client.setString("test", new Client.CourseClientCallbacks() {
-////        @Override
-////        public void testPost(String theString) {
-////          firstString.complete(theString);
-////        }
-////      });
-////      assertThat(firstString.get()).isEqualTo("test");
-////
-////
-////      CompletableFuture<String> secondString = new CompletableFuture<>();
-////      client.getString(new Client.CourseClientCallbacks() {
-////        @Override
-////        public void testPost(String theString) {
-////          secondString.complete(theString);
-////        }
-////      });
-////      assertThat(secondString.get()).isEqualTo("test");
-////    }
-//    /** Test the client getRating method */
-//    @Test(timeout = 20000L)
-//    @Graded(points = 15)
-//    public void testClientGetRating()
-//        throws JsonProcessingException, InterruptedException, ExecutionException {
+  @SuppressWarnings({
+    "SameParameterValue",
+    "ConstantConditions",
+    "MismatchedQueryAndUpdateOfCollection"
+  })
+  @RunWith(AndroidJUnit4.class)
+  @LooperMode(LooperMode.Mode.PAUSED)
+  public static class IntegrationTests {
+    @BeforeClass
+    public static void setup() throws IOException {
+      MP2Test.setup();
+    }
+
+//    /** Test the post */
+//    @Test
+//    public void testPost() throws ExecutionException, InterruptedException {
 //      Client client = Client.start();
 //
-//      List<String> randomIDs =
-//          Arrays.asList(
-//              UUID.randomUUID().toString(),
-//              UUID.randomUUID().toString(),
-//              UUID.randomUUID().toString(),
-//              UUID.randomUUID().toString());
 //
-//      for (String summaryString : summaries) {
-//        Summary summary = mapper.readValue(summaryString, Summary.class);
-//        String clientID = randomIDs.get(random.nextInt(randomIDs.size()));
-//
-//        CompletableFuture<Rating> completableFuture = new CompletableFuture<>();
-//        client.getRating(
-//            summary,
-//            clientID,
-//            new Client.CourseClientCallbacks() {
-//              @Override
-//              public void yourRating(Summary summary, Rating rating) {
-//                completableFuture.complete(rating);
-//              }
-//            });
-//        Rating rating = completableFuture.get();
-//        assertThat(rating.getId()).isEqualTo(clientID);
-//        assertThat(rating.getRating()).isEqualTo(Rating.NOT_RATED);
-//      }
-//    }
-//
-//    /** Test the client getRating method */
-//    @Test(timeout = 4000L)
-//    @Graded(points = 15)
-//    public void testClientPostRating()
-//        throws JsonProcessingException, InterruptedException, ExecutionException {
-//      Client client = Client.start();
-//
-//      List<String> randomIDs =
-//          Arrays.asList(
-//              UUID.randomUUID().toString(),
-//              UUID.randomUUID().toString(),
-//              UUID.randomUUID().toString(),
-//              UUID.randomUUID().toString());
-//
-//      Map<String, Map<Summary, Double>> testRatings = new HashMap<>();
-//
-//      for (String summaryString : summaries.subList(0, 8)) {
-//        Summary summary = mapper.readValue(summaryString, Summary.class);
-//        String clientID = randomIDs.get(0); // randomIDs.get(random.nextInt(randomIDs.size()));
-//
-//        CompletableFuture<Rating> completableFuture = new CompletableFuture<>();
-//        if (random.nextBoolean()) {
-//          client.getRating(
-//              summary,
-//              clientID,
-//              new Client.CourseClientCallbacks() {
-//                @Override
-//                public void yourRating(Summary summary, Rating rating) {
-//                  completableFuture.complete(rating);
-//                }
-//              });
-//        } else {
-//          double testRating = random.nextInt(51) / 10.0;
-//          Map<Summary, Double> innerMap = testRatings.getOrDefault(clientID, new HashMap<>());
-//          innerMap.put(summary, testRating);
-//          testRatings.put(clientID, innerMap);
-//          client.postRating(
-//              summary,
-//              new Rating(clientID, testRating),
-//              new Client.CourseClientCallbacks() {
-//                @Override
-//                public void yourRating(Summary summary, Rating rating) {
-//                  completableFuture.complete(rating);
-//                }
-//              });
+//      CompletableFuture<String> firstString = new CompletableFuture<>();
+//      client.setString("test", new Client.CourseClientCallbacks() {
+//        @Override
+//        public void testPost(String theString) {
+//          firstString.complete(theString);
 //        }
-//        double expectedRating = Rating.NOT_RATED;
-//        try {
-//          expectedRating = testRatings.get(clientID).get(summary);
-//        } catch (NullPointerException ignored) {
+//      });
+//      assertThat(firstString.get()).isEqualTo("test");
+//
+//
+//      CompletableFuture<String> secondString = new CompletableFuture<>();
+//      client.getString(new Client.CourseClientCallbacks() {
+//        @Override
+//        public void testPost(String theString) {
+//          secondString.complete(theString);
 //        }
-//        Rating rating = completableFuture.get();
-//        assertThat(rating.getId()).isEqualTo(clientID);
-//        assertThat(rating.getRating()).isEqualTo(expectedRating);
-//      }
+//      });
+//      assertThat(secondString.get()).isEqualTo("test");
 //    }
-//
-//    /** Test rating view. */
-//    @Test(timeout = 10000L)
-//    @Graded(points = 20)
-//    public void testRatingView() throws JsonProcessingException, InterruptedException {
-//
-//      int i = 1;
-//      for (String summaryString : summaries.subList(0, 4)) {
-//        Intent intent =
-//            new Intent(ApplicationProvider.getApplicationContext(), CourseActivity.class);
-//        ObjectNode summaryForIntent = (ObjectNode) mapper.readTree(summaryString);
-//        summaryForIntent.remove("description");
-//        intent.putExtra("COURSE", summaryForIntent.toString());
-//        ActivityScenario<CourseActivity> courseScenario = ActivityScenario.launch(intent);
-//        courseScenario.moveToState(Lifecycle.State.CREATED);
-//        courseScenario.moveToState(Lifecycle.State.RESUMED);
-//        Thread.sleep(100);
-//        ObjectNode summary = (ObjectNode) mapper.readTree(summaryString);
-//        onView(ViewMatchers.withText(summary.get("description").asText()))
-//            .check(ViewAssertions.matches(ViewMatchers.isDisplayed()));
-//        onView(withId(R.id.rating)).check(hasRating(0)).perform(setRating(i)).check(hasRating(i));
-//        i++;
-//      }
-//
-//      i = 1;
-//      for (String summaryString : summaries.subList(0, 4)) {
-//        Intent intent =
-//            new Intent(ApplicationProvider.getApplicationContext(), CourseActivity.class);
-//        ObjectNode summaryForIntent = (ObjectNode) mapper.readTree(summaryString);
-//        summaryForIntent.remove("description");
-//        intent.putExtra("COURSE", summaryForIntent.toString());
-//        ActivityScenario<CourseActivity> courseScenario = ActivityScenario.launch(intent);
-//        courseScenario.moveToState(Lifecycle.State.CREATED);
-//        courseScenario.moveToState(Lifecycle.State.RESUMED);
-//        Thread.sleep(100);
-//        onView(withId(R.id.rating))
-//            .check(hasRating(i))
-//            .perform(setRating(5 - i))
-//            .check(hasRating(5 - i));
-//        i++;
-//      }
-//
-//      i = 1;
-//      for (String summaryString : summaries.subList(0, 4)) {
-//        Intent intent =
-//            new Intent(ApplicationProvider.getApplicationContext(), CourseActivity.class);
-//        ObjectNode summaryForIntent = (ObjectNode) mapper.readTree(summaryString);
-//        summaryForIntent.remove("description");
-//        intent.putExtra("COURSE", summaryForIntent.toString());
-//        ActivityScenario<CourseActivity> courseScenario = ActivityScenario.launch(intent);
-//        courseScenario.moveToState(Lifecycle.State.CREATED);
-//        courseScenario.moveToState(Lifecycle.State.RESUMED);
-//        Thread.sleep(100);
-//        onView(withId(R.id.rating))
-//            .check(hasRating(5 - i))
-//            .perform(setRating(i))
-//            .check(hasRating(i));
-//        i++;
-//      }
-//    }
-//
-//    /**
-//     * ViewAssertion for RatingBar rating examination.
-//     *
-//     * @param rating the rating the RatingBar should have
-//     * @return a ViewAssertion that checks that the view is a RatingBar with the specified rating
-//     */
-//    public static ViewAssertion hasRating(int rating) {
-//      return (view, noViewFoundException) -> {
-//        RatingBar ratingBar = (RatingBar) view;
-//        assertThat(ratingBar.getRating()).isEqualTo(rating);
-//      };
-//    }
-//
-//    /**
-//     * ViewAction for RatingBar rating modification.
-//     *
-//     * @param rating the rating to set
-//     * @return a ViewAction that sets the rating for the RatingBar to the specified rating
-//     */
-//    public static ViewAction setRating(int rating) {
-//      return actionWithAssertions(
-//          new ViewAction() {
-//            @Override
-//            public Matcher<View> getConstraints() {
-//              return ViewMatchers.isAssignableFrom(RatingBar.class);
-//            }
-//
-//            @Override
-//            public String getDescription() {
-//              return "Custom view action to set rating.";
-//            }
-//
-//            @Override
-//            public void perform(UiController uiController, View view) {
-//              RatingBar ratingBar = (RatingBar) view;
-//              ratingBar.setRating(rating);
-//            }
-//          });
-//    }
-//  }
+    /** Test the client getRating method */
+    @Test(timeout = 20000L)
+    @Graded(points = 15)
+    public void testClientGetRating()
+        throws JsonProcessingException, InterruptedException, ExecutionException {
+      Client client = Client.start();
+
+      List<String> randomIDs =
+          Arrays.asList(
+              UUID.randomUUID().toString(),
+              UUID.randomUUID().toString(),
+              UUID.randomUUID().toString(),
+              UUID.randomUUID().toString());
+
+      for (String summaryString : summaries) {
+        Summary summary = mapper.readValue(summaryString, Summary.class);
+        String clientID = randomIDs.get(random.nextInt(randomIDs.size()));
+
+        CompletableFuture<Rating> completableFuture = new CompletableFuture<>();
+        client.getRating(
+            summary,
+            clientID,
+            new Client.CourseClientCallbacks() {
+              @Override
+              public void yourRating(Summary summary, Rating rating) {
+                completableFuture.complete(rating);
+              }
+            });
+        Rating rating = completableFuture.get();
+        assertThat(rating.getId()).isEqualTo(clientID);
+        assertThat(rating.getRating()).isEqualTo(Rating.NOT_RATED);
+      }
+    }
+
+    /** Test the client getRating method */
+    @Test(timeout = 4000L)
+    @Graded(points = 15)
+    public void testClientPostRating()
+        throws JsonProcessingException, InterruptedException, ExecutionException {
+      Client client = Client.start();
+
+      List<String> randomIDs =
+          Arrays.asList(
+              UUID.randomUUID().toString(),
+              UUID.randomUUID().toString(),
+              UUID.randomUUID().toString(),
+              UUID.randomUUID().toString());
+
+      Map<String, Map<Summary, Double>> testRatings = new HashMap<>();
+
+      for (String summaryString : summaries.subList(0, 8)) {
+        Summary summary = mapper.readValue(summaryString, Summary.class);
+        String clientID = randomIDs.get(0); // randomIDs.get(random.nextInt(randomIDs.size()));
+
+        CompletableFuture<Rating> completableFuture = new CompletableFuture<>();
+        if (random.nextBoolean()) {
+          client.getRating(
+              summary,
+              clientID,
+              new Client.CourseClientCallbacks() {
+                @Override
+                public void yourRating(Summary summary, Rating rating) {
+                  completableFuture.complete(rating);
+                }
+              });
+        } else {
+          double testRating = random.nextInt(51) / 10.0;
+          Map<Summary, Double> innerMap = testRatings.getOrDefault(clientID, new HashMap<>());
+          innerMap.put(summary, testRating);
+          testRatings.put(clientID, innerMap);
+          client.postRating(
+              summary,
+              new Rating(clientID, testRating),
+              new Client.CourseClientCallbacks() {
+                @Override
+                public void yourRating(Summary summary, Rating rating) {
+                  completableFuture.complete(rating);
+                }
+              });
+        }
+        double expectedRating = Rating.NOT_RATED;
+        try {
+          expectedRating = testRatings.get(clientID).get(summary);
+        } catch (NullPointerException ignored) {
+        }
+        Rating rating = completableFuture.get();
+        assertThat(rating.getId()).isEqualTo(clientID);
+        assertThat(rating.getRating()).isEqualTo(expectedRating);
+      }
+    }
+
+    /** Test rating view. */
+    @Test(timeout = 10000L)
+    @Graded(points = 20)
+    public void testRatingView() throws JsonProcessingException, InterruptedException {
+
+      int i = 1;
+      for (String summaryString : summaries.subList(0, 4)) {
+        Intent intent =
+            new Intent(ApplicationProvider.getApplicationContext(), CourseActivity.class);
+        ObjectNode summaryForIntent = (ObjectNode) mapper.readTree(summaryString);
+        summaryForIntent.remove("description");
+        intent.putExtra("COURSE", summaryForIntent.toString());
+        ActivityScenario<CourseActivity> courseScenario = ActivityScenario.launch(intent);
+        courseScenario.moveToState(Lifecycle.State.CREATED);
+        courseScenario.moveToState(Lifecycle.State.RESUMED);
+        Thread.sleep(100);
+        ObjectNode summary = (ObjectNode) mapper.readTree(summaryString);
+        onView(ViewMatchers.withText(summary.get("description").asText()))
+            .check(ViewAssertions.matches(ViewMatchers.isDisplayed()));
+        onView(withId(R.id.rating)).check(hasRating(0)).perform(setRating(i)).check(hasRating(i));
+        i++;
+      }
+
+      i = 1;
+      for (String summaryString : summaries.subList(0, 4)) {
+        Intent intent =
+            new Intent(ApplicationProvider.getApplicationContext(), CourseActivity.class);
+        ObjectNode summaryForIntent = (ObjectNode) mapper.readTree(summaryString);
+        summaryForIntent.remove("description");
+        intent.putExtra("COURSE", summaryForIntent.toString());
+        ActivityScenario<CourseActivity> courseScenario = ActivityScenario.launch(intent);
+        courseScenario.moveToState(Lifecycle.State.CREATED);
+        courseScenario.moveToState(Lifecycle.State.RESUMED);
+        Thread.sleep(100);
+        onView(withId(R.id.rating))
+            .check(hasRating(i))
+            .perform(setRating(5 - i))
+            .check(hasRating(5 - i));
+        i++;
+      }
+
+      i = 1;
+      for (String summaryString : summaries.subList(0, 4)) {
+        Intent intent =
+            new Intent(ApplicationProvider.getApplicationContext(), CourseActivity.class);
+        ObjectNode summaryForIntent = (ObjectNode) mapper.readTree(summaryString);
+        summaryForIntent.remove("description");
+        intent.putExtra("COURSE", summaryForIntent.toString());
+        ActivityScenario<CourseActivity> courseScenario = ActivityScenario.launch(intent);
+        courseScenario.moveToState(Lifecycle.State.CREATED);
+        courseScenario.moveToState(Lifecycle.State.RESUMED);
+        Thread.sleep(100);
+        onView(withId(R.id.rating))
+            .check(hasRating(5 - i))
+            .perform(setRating(i))
+            .check(hasRating(i));
+        i++;
+      }
+    }
+
+    /**
+     * ViewAssertion for RatingBar rating examination.
+     *
+     * @param rating the rating the RatingBar should have
+     * @return a ViewAssertion that checks that the view is a RatingBar with the specified rating
+     */
+    public static ViewAssertion hasRating(int rating) {
+      return (view, noViewFoundException) -> {
+        RatingBar ratingBar = (RatingBar) view;
+        assertThat(ratingBar.getRating()).isEqualTo(rating);
+      };
+    }
+
+    /**
+     * ViewAction for RatingBar rating modification.
+     *
+     * @param rating the rating to set
+     * @return a ViewAction that sets the rating for the RatingBar to the specified rating
+     */
+    public static ViewAction setRating(int rating) {
+      return actionWithAssertions(
+          new ViewAction() {
+            @Override
+            public Matcher<View> getConstraints() {
+              return ViewMatchers.isAssignableFrom(RatingBar.class);
+            }
+
+            @Override
+            public String getDescription() {
+              return "Custom view action to set rating.";
+            }
+
+            @Override
+            public void perform(UiController uiController, View view) {
+              RatingBar ratingBar = (RatingBar) view;
+              ratingBar.setRating(rating);
+            }
+          });
+    }
+  }
 }

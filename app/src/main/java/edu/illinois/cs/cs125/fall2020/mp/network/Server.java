@@ -103,21 +103,34 @@ public final class Server extends Dispatcher {
       return new MockResponse().setResponseCode(HttpURLConnection.HTTP_NOT_FOUND);
     }
 
-    Rating newRating = ratings.getOrDefault(courses, new Rating(ratingUuid, Rating.NOT_RATED));
+    //Rating newRating = ratings.getOrDefault(courses, new Rating(ratingUuid, Rating.NOT_RATED));
 
-    if (!ratingUuid.equals(newRating.getId())) {
-      return new MockResponse().setResponseCode(HttpURLConnection.HTTP_BAD_REQUEST);
-    }
+//    if (!ratingUuid.equals(newRating.getId())) {
+//      return new MockResponse().setResponseCode(HttpURLConnection.HTTP_BAD_REQUEST);
+//    }
 
     String rating = "";
-    try {
-      rating = mapper.writeValueAsString(newRating);
-    } catch (JsonProcessingException e) {
-      e.printStackTrace();
-    }
+//    try {
+//      rating = mapper.writeValueAsString(newRating);
+//    } catch (JsonProcessingException e) {
+//      e.printStackTrace();
+//    }
     if (request.getMethod().equals("GET")) {
+      //new Rating
+      Rating newRating = ratings.getOrDefault(courses, new Rating(ratingUuid, Rating.NOT_RATED));
+      //check newRating uuid .equals() request uuid
+      if (!ratingUuid.equals(newRating.getId())) {
+        return new MockResponse().setResponseCode(HttpURLConnection.HTTP_BAD_REQUEST);
+      }
+      //deserialization
+      try {
+        rating = mapper.writeValueAsString(newRating);
+      } catch (JsonProcessingException e) {
+        e.printStackTrace();
+      }
       return new MockResponse().setResponseCode(HttpURLConnection.HTTP_OK).setBody(rating);
     } else if (request.getMethod().equals("POST")) {
+      //get request info in string
       rating = request.getBody().readUtf8();
 //      try {
 //        Rating postRating = mapper.readValue(rating, Rating.class);
