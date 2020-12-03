@@ -46,6 +46,8 @@ public class CourseableApplication extends Application {
    * GetClientID.
    * @return clintID
    */
-  public final String getClientId() { return clientId; }
+  public final String getClientId() {
+    return clientId;
+  }
 
 }

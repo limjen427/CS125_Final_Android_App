@@ -197,6 +197,7 @@ public final class Client {
                     url,
                     response -> callbacks.yourRating(summary, rating),
                     error -> Log.e(TAG, error.toString()));
+    //ratingRequest.set
     requestQueue.add(ratingRequest);
   }
   private static Client instance;

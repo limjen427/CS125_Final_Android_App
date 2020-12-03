@@ -444,20 +444,13 @@ public final class MP2Test {
               UUID.randomUUID().toString());
 
       Map<String, Map<Summary, Double>> testRatings = new HashMap<>();
+
       for (String summaryString : summaries.subList(0, 8)) {
-        System.out.println(summaryString);
-      }
-      for (String summaryString : summaries.subList(0, 8)) {
-        System.out.println(summaryString);
         Summary summary = mapper.readValue(summaryString, Summary.class);
-        System.out.println("1");
         String clientID = randomIDs.get(0); // randomIDs.get(random.nextInt(randomIDs.size()));
-        System.out.println("2");
 
         CompletableFuture<Rating> completableFuture = new CompletableFuture<>();
-        System.out.println("3");
         if (random.nextBoolean()) {
-          System.out.println("4");
           client.getRating(
               summary,
               clientID,
@@ -467,17 +460,11 @@ public final class MP2Test {
                   completableFuture.complete(rating);
                 }
               });
-          System.out.println("12");
         } else {
-          System.out.println("5");
           double testRating = random.nextInt(51) / 10.0;
-          System.out.println("6");
           Map<Summary, Double> innerMap = testRatings.getOrDefault(clientID, new HashMap<>());
-          System.out.println("7");
           innerMap.put(summary, testRating);
-          System.out.println("8");
           testRatings.put(clientID, innerMap);
-          System.out.println("9");
           client.postRating(
               summary,
               new Rating(clientID, testRating),
@@ -487,27 +474,20 @@ public final class MP2Test {
                   completableFuture.complete(rating);
                 }
               });
-          System.out.println("10");
         }
         double expectedRating = Rating.NOT_RATED;
         try {
-          System.out.println("13");
           expectedRating = testRatings.get(clientID).get(summary);
-          System.out.println("14");
         } catch (NullPointerException ignored) {
         }
-        System.out.println("18");
         Rating rating = completableFuture.get();
-        System.out.println("15");
         assertThat(rating.getId()).isEqualTo(clientID);
-        System.out.println("16");
         assertThat(rating.getRating()).isEqualTo(expectedRating);
-        System.out.println("17");
       }
     }
 
     /** Test rating view. */
-    @Test(timeout = 10000L)
+    @Test(timeout = 50000L)
     @Graded(points = 20)
     public void testRatingView() throws JsonProcessingException, InterruptedException {
 

@@ -10,7 +10,7 @@ public class Rating {
      */
   public static final double NOT_RATED = -1.0;
   private String id;
-  private double rating;
+  private double rating = NOT_RATED;
 
   /**
    * Empty constructor.

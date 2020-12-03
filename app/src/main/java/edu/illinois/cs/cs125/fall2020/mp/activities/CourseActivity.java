@@ -18,6 +18,7 @@ import edu.illinois.cs.cs125.fall2020.mp.application.CourseableApplication;
 import edu.illinois.cs.cs125.fall2020.mp.models.Course;
 import edu.illinois.cs.cs125.fall2020.mp.databinding.ActivityCourseBinding;
 //import edu.illinois.cs.cs125.fall2020.mp.models.Rating;
+import edu.illinois.cs.cs125.fall2020.mp.models.Rating;
 import edu.illinois.cs.cs125.fall2020.mp.models.Summary;
 import edu.illinois.cs.cs125.fall2020.mp.network.Client;
 
@@ -35,6 +36,7 @@ public class CourseActivity extends AppCompatActivity implements Client.CourseCl
   private RatingBar ratingBar;
   private CourseableApplication application;
   private Summary course;
+  private CourseActivity self = this;
 
   /**
    * Call when this cativity is created.
@@ -57,14 +59,15 @@ public class CourseActivity extends AppCompatActivity implements Client.CourseCl
       e.printStackTrace();
     }
     ratingBar = findViewById(R.id.rating);
-//    ratingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
-//      @Override
-//      public void onRatingChanged(final RatingBar ratingBar, final float rating, final boolean fromUser) {
-//         Rating newRating = new Rating(application.getClientId(), (double) rating);
-//         application.getCourseClient().postRating(course, newRating, this);
-//      }
-//    });
-
+    ratingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
+      @Override
+      public void onRatingChanged(final RatingBar bar, final float rating, final boolean fromUser) {
+        System.out.println(rating);
+        Rating newRating = new Rating(application.getClientId(), (double) rating);
+        application.getCourseClient().postRating(course, newRating, self);
+      }
+    });
+    application.getCourseClient().getRating(course, application.getClientId(), this);
   }
   /**
    * Callback called when the client has retrieved the list of courses for this component to display.
@@ -81,4 +84,14 @@ public class CourseActivity extends AppCompatActivity implements Client.CourseCl
     //binding.rating.setRating(course.getRating());
   }
 
+  /**
+   * Callback called when the client has retrieved the list of rating.
+   * @param summary course symmary
+   * @param rating course rating
+   */
+  @Override
+  public void yourRating(final Summary summary, final Rating rating) {
+    System.out.println(rating.getRating());
+    binding.rating.setRating((float) rating.getRating());
+  }
 }

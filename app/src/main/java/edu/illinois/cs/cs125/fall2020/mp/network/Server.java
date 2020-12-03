@@ -64,6 +64,7 @@ public final class Server extends Dispatcher {
     Summary course1 = new Summary(parts[0], parts[1], parts[2], parts[3], "");
 
     String course = courses.getOrDefault(course1, null);
+    //System.out.println(course);
     if (course == null) {
       return new MockResponse().setResponseCode(HttpURLConnection.HTTP_NOT_FOUND);
     }
@@ -132,14 +133,18 @@ public final class Server extends Dispatcher {
 //      }
 //      Rating newRating = ratings1.getOrDefault(courses, new Rating(ratingUuid, Rating.NOT_RATED));
       //check newRating uuid .equals() request uuid
+
+      System.out.println("GET");
+      System.out.println(newRating.getId() + ' ' + newRating.getRating());
+      System.out.println(path);
+
       if (!ratingUuid.equals(newRating.getId())) {
-        System.out.println(ratingUuid);
-        System.out.println(newRating.getId());
         return new MockResponse().setResponseCode(HttpURLConnection.HTTP_BAD_REQUEST);
       }
       //deserialization
       try {
         rating = mapper.writeValueAsString(newRating);
+        System.out.println(rating);
       } catch (JsonProcessingException e) {
         e.printStackTrace();
       }
@@ -151,7 +156,9 @@ public final class Server extends Dispatcher {
       //3. course == null -> HTTP_NOT_FOUND
       //get request info in string
       rating = request.getBody().readUtf8();
+      System.out.println("POST");
       System.out.println(rating);
+      System.out.println(path);
       Rating postRating = new Rating();
       if (!rating.isEmpty()) {
         if (rating.charAt(0) != '{' || rating.charAt(rating.length() - 1) != '}') {
@@ -164,19 +171,13 @@ public final class Server extends Dispatcher {
         e.printStackTrace();
         return new MockResponse().setResponseCode(HttpURLConnection.HTTP_OK);
       }
-      System.out.println(postRating.getId());
-      System.out.println(postRating.getRating());
       if (!ratingUuid.equals(postRating.getId())) {
         return new MockResponse().setResponseCode(HttpURLConnection.HTTP_BAD_REQUEST);
       }
-      System.out.println(path);
+
       rating2.put(path, postRating);
 
-
       return new MockResponse().setResponseCode(HttpURLConnection.HTTP_OK).setBody(rating);
-//              .setHeader(
-//              "Location", "/rating/" +
-//      );
     }
     return new MockResponse().setResponseCode(HttpURLConnection.HTTP_BAD_REQUEST);
   }
