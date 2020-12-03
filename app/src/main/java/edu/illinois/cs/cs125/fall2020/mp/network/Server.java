@@ -77,49 +77,64 @@ public final class Server extends Dispatcher {
     return false;
   }
 
-  private final Map<Map<Summary, String>, Rating> ratings = new HashMap<>();
+//  private final Map<Map<Summary, String>, Rating> ratings = new HashMap<>();
+  //private final Map<Summary, Map<String, Rating>> ratings1 = new HashMap<>();
+  private final Map<String, Rating> rating2 = new HashMap<>();
 
   private MockResponse getRating(@NonNull final RecordedRequest request) {
     String path = request.getPath().replaceFirst("/rating/", "");
-
+    //check uuid length from url
+    //baseurl/rating/year/semester/department/number?client=uuid
     String[] uuidParts = path.split("\\?client=");
     if (uuidParts.length != 2) {
       return new MockResponse().setResponseCode(HttpURLConnection.HTTP_BAD_REQUEST);
     }
-
+    //check url length from url provided
     String[] urlParts = uuidParts[0].split("/");
     if (urlParts.length != FOUR) {
       return new MockResponse().setResponseCode(HttpURLConnection.HTTP_BAD_REQUEST);
     }
-
+    //check if uuid is valid
     String ratingUuid = uuidParts[1];
     if (!checkUUID(ratingUuid)) {
       return new MockResponse().setResponseCode(HttpURLConnection.HTTP_BAD_REQUEST);
     }
-
+    //make new Summary newCourse
     Summary newCourse = new Summary(urlParts[0], urlParts[1], urlParts[2], urlParts[3], "");
+    //check if course is valid
     String course = courses.getOrDefault(newCourse, null);
     if (course == null) {
       return new MockResponse().setResponseCode(HttpURLConnection.HTTP_NOT_FOUND);
     }
+    //check if Rating is valid or make default Rating
+//    Rating newRating = ratings.getOrDefault(courses, new Rating(ratingUuid, Rating.NOT_RATED));
 
-    //Rating newRating = ratings.getOrDefault(courses, new Rating(ratingUuid, Rating.NOT_RATED));
-
+    //if newRatingUuid != urlUuid
 //    if (!ratingUuid.equals(newRating.getId())) {
 //      return new MockResponse().setResponseCode(HttpURLConnection.HTTP_BAD_REQUEST);
 //    }
 
+    //serialize new made Rating into String
     String rating = "";
 //    try {
 //      rating = mapper.writeValueAsString(newRating);
 //    } catch (JsonProcessingException e) {
 //      e.printStackTrace();
 //    }
+    //check if request is GET or POST
     if (request.getMethod().equals("GET")) {
+      Rating newRating = rating2.getOrDefault(path, new Rating(ratingUuid, Rating.NOT_RATED));
       //new Rating
-      Rating newRating = ratings.getOrDefault(courses, new Rating(ratingUuid, Rating.NOT_RATED));
+//      if (ratings1.containsKey(newCourse)) {
+//        if (ratings1.get(newCourse).containsKey(ratingUuid)) {
+//          Rating newRating = ratings1.get(newCourse).get(ratingUuid);
+//        }
+//      }
+//      Rating newRating = ratings1.getOrDefault(courses, new Rating(ratingUuid, Rating.NOT_RATED));
       //check newRating uuid .equals() request uuid
       if (!ratingUuid.equals(newRating.getId())) {
+        System.out.println(ratingUuid);
+        System.out.println(newRating.getId());
         return new MockResponse().setResponseCode(HttpURLConnection.HTTP_BAD_REQUEST);
       }
       //deserialization
@@ -130,17 +145,38 @@ public final class Server extends Dispatcher {
       }
       return new MockResponse().setResponseCode(HttpURLConnection.HTTP_OK).setBody(rating);
     } else if (request.getMethod().equals("POST")) {
+      //things need to do
+      //1. deserialize request -> String  into Rating
+      //2. url not properly formatted || body JSON invalid || uuid != uuid -> HTTP_BAD_REQUEST
+      //3. course == null -> HTTP_NOT_FOUND
       //get request info in string
       rating = request.getBody().readUtf8();
-//      try {
-//        Rating postRating = mapper.readValue(rating, Rating.class);
-//        ratings.put(courses, postRating);
-//      } catch (JsonProcessingException e) {
-//        e.printStackTrace();
-//      }
-      return new MockResponse().setResponseCode(HttpURLConnection.HTTP_MOVED_TEMP).setHeader(
-              "Location", "/rating/" + path
-      );
+      System.out.println(rating);
+      Rating postRating = new Rating();
+      if (!rating.isEmpty()) {
+        if (rating.charAt(0) != '{' || rating.charAt(rating.length() - 1) != '}') {
+          return new MockResponse().setResponseCode(HttpURLConnection.HTTP_BAD_REQUEST);
+        }
+      }
+      try {
+        postRating = mapper.readValue(rating, Rating.class);
+      } catch (JsonProcessingException e) {
+        e.printStackTrace();
+        return new MockResponse().setResponseCode(HttpURLConnection.HTTP_OK);
+      }
+      System.out.println(postRating.getId());
+      System.out.println(postRating.getRating());
+      if (!ratingUuid.equals(postRating.getId())) {
+        return new MockResponse().setResponseCode(HttpURLConnection.HTTP_BAD_REQUEST);
+      }
+      System.out.println(path);
+      rating2.put(path, postRating);
+
+
+      return new MockResponse().setResponseCode(HttpURLConnection.HTTP_OK).setBody(rating);
+//              .setHeader(
+//              "Location", "/rating/" +
+//      );
     }
     return new MockResponse().setResponseCode(HttpURLConnection.HTTP_BAD_REQUEST);
   }
@@ -177,9 +213,6 @@ public final class Server extends Dispatcher {
         return getCourse(path.replaceFirst("/course/", ""));
       } else if (path.startsWith("/rating/")) {
         return getRating(request);
-        //return getRating(path.replaceFirst("rating", ""));
-//      } else if (path.equals("/test/")) {
-//        return testPost(request);
       }
       return new MockResponse().setResponseCode(HttpURLConnection.HTTP_NOT_FOUND);
     } catch (Exception e) {

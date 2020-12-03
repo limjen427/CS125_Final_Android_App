@@ -2,6 +2,7 @@ package edu.illinois.cs.cs125.fall2020.mp.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.RatingBar;
 //import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -16,6 +17,7 @@ import edu.illinois.cs.cs125.fall2020.mp.R;
 import edu.illinois.cs.cs125.fall2020.mp.application.CourseableApplication;
 import edu.illinois.cs.cs125.fall2020.mp.models.Course;
 import edu.illinois.cs.cs125.fall2020.mp.databinding.ActivityCourseBinding;
+//import edu.illinois.cs.cs125.fall2020.mp.models.Rating;
 import edu.illinois.cs.cs125.fall2020.mp.models.Summary;
 import edu.illinois.cs.cs125.fall2020.mp.network.Client;
 
@@ -30,6 +32,9 @@ public class CourseActivity extends AppCompatActivity implements Client.CourseCl
   private ObjectMapper mapper = new ObjectMapper();
   @NonNull private String courseTitle;
   @NonNull private String courseDescription;
+  private RatingBar ratingBar;
+  private CourseableApplication application;
+  private Summary course;
 
   /**
    * Call when this cativity is created.
@@ -45,26 +50,35 @@ public class CourseActivity extends AppCompatActivity implements Client.CourseCl
     Intent intent = getIntent();
     String courseString = intent.getStringExtra("COURSE");
     try {
-      Summary course = mapper.readValue(courseString, Course.class);
-      CourseableApplication application = (CourseableApplication) getApplication();
+      course = mapper.readValue(courseString, Course.class);
+      application = (CourseableApplication) getApplication();
       application.getCourseClient().getCourse(course, this);
     } catch (JsonProcessingException e) {
       e.printStackTrace();
     }
+    ratingBar = findViewById(R.id.rating);
+//    ratingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
+//      @Override
+//      public void onRatingChanged(final RatingBar ratingBar, final float rating, final boolean fromUser) {
+//         Rating newRating = new Rating(application.getClientId(), (double) rating);
+//         application.getCourseClient().postRating(course, newRating, this);
+//      }
+//    });
 
   }
   /**
    * Callback called when the client has retrieved the list of courses for this component to display.
    *
    * @param summary the summary that was retrieved
-   * @param course the course that was retrieved
+   * @param courses the course that was retrieved
    */
   @Override
-  public void courseResponse(final Summary summary, final Course course) {
+  public void courseResponse(final Summary summary, final Course courses) {
     courseTitle = summary.getEntire();
-    courseDescription = course.getDescription();
+    courseDescription = courses.getDescription();
     binding.title.setText(courseTitle);
     binding.description.setText(courseDescription);
+    //binding.rating.setRating(course.getRating());
   }
 
 }

@@ -164,7 +164,7 @@ public final class Client {
           @NonNull final CourseClientCallbacks callbacks
   ) {
     String url = CourseableApplication.SERVER_URL + "rating/" + summary.getPath() + "?client=" + clientId;
-    StringRequest courseRequest =
+    StringRequest ratingRequest =
             new StringRequest(
                     Request.Method.GET,
                     url,
@@ -177,7 +177,7 @@ public final class Client {
                       }
                     },
                     error -> Log.e(TAG, error.toString()));
-    requestQueue.add(courseRequest);
+    requestQueue.add(ratingRequest);
   }
   /**
    * postRating.
@@ -191,13 +191,13 @@ public final class Client {
           @NonNull final CourseClientCallbacks callbacks
   ) {
     String url = CourseableApplication.SERVER_URL + "rating/" + summary.getPath() + "?client=" + rating.getId();
-    StringRequest courseRequest =
+    StringRequest ratingRequest =
             new StringRequest(
                     Request.Method.POST,
                     url,
                     response -> callbacks.yourRating(summary, rating),
                     error -> Log.e(TAG, error.toString()));
-    requestQueue.add(courseRequest);
+    requestQueue.add(ratingRequest);
   }
   private static Client instance;
 
