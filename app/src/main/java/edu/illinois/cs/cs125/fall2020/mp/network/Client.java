@@ -4,6 +4,7 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 
 //import com.android.volley.AuthFailureError;
+import com.android.volley.AuthFailureError;
 import com.android.volley.Cache;
 import com.android.volley.ExecutorDelivery;
 import com.android.volley.Network;
@@ -191,13 +192,24 @@ public final class Client {
           @NonNull final CourseClientCallbacks callbacks
   ) {
     String url = CourseableApplication.SERVER_URL + "rating/" + summary.getPath() + "?client=" + rating.getId();
+    String newRating = "";
+    try {
+      newRating = objectMapper.writeValueAsString(rating);
+    } catch (JsonProcessingException e) {
+      e.printStackTrace();
+    }
+    final String copyRating = newRating;
     StringRequest ratingRequest =
             new StringRequest(
                     Request.Method.POST,
                     url,
                     response -> callbacks.yourRating(summary, rating),
-                    error -> Log.e(TAG, error.toString()));
-    //ratingRequest.set
+                    error -> Log.e(TAG, error.toString())) {
+      @Override
+      public byte[] getBody() throws AuthFailureError {
+        return copyRating.getBytes();
+      }
+    };
     requestQueue.add(ratingRequest);
   }
   private static Client instance;
