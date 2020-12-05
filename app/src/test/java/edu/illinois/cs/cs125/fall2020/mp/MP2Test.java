@@ -487,7 +487,7 @@ public final class MP2Test {
     }
 
     /** Test rating view. */
-    @Test(timeout = 50000L)
+    @Test(timeout = 10000L)
     @Graded(points = 20)
     public void testRatingView() throws JsonProcessingException, InterruptedException {
 
